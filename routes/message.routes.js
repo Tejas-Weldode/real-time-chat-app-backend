@@ -2,6 +2,8 @@ import express from "express";
 import Message from "../models/message.model.js";
 import Chat from "../models/chat.model.js";
 import auth from "../middlewares/auth.js";
+import { getReceiverSocketId } from "../socket/socket.js";
+import { io } from "../socket/socket.js";
 
 const router = express.Router();
 
@@ -40,6 +42,12 @@ router.post("/send", auth, async (req, res) => {
         }
         await chat.save();
         //
+        // socket.io functionality -- start
+        const receiverSocketId = getReceiverSocketId(receiverId);
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit("newMessage", newMessage);
+        }
+        // -- end
 
         return res.status(201).json({ newMessage });
     } catch (error) {

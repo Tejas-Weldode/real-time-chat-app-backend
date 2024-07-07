@@ -6,7 +6,7 @@ import cors from "cors";
 import userRoutes from "./routes/user.routes.js";
 import messageRoutes from "./routes/message.routes.js";
 import chatRoutes from "./routes/chat.routes.js";
-const app = express();
+import { app, server } from "./socket/socket.js";
 const port = 3000;
 
 // middlewares
@@ -27,6 +27,6 @@ app.use("/user", userRoutes);
 app.use("/message", messageRoutes);
 app.use("/chat", chatRoutes);
 
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });

@@ -25,6 +25,7 @@ const getUserData = async (id) => {
     const token = jwt.sign({ userId: id }, process.env.JWT_SECRET);
     // return
     return {
+        _id: user._id,
         fullName: user.fullName,
         username: user.username,
         email: user.email,
@@ -216,7 +217,7 @@ router.post("/forgot-password", async (req, res) => {
             }
         }
         // save the otp with corresponding email in te otp table.
-        const newRecord = new Otp( {
+        const newRecord = new Otp({
             otp,
             userId: testUser._id,
         });
@@ -240,7 +241,9 @@ router.put("/set-new-password", async (req, res) => {
     try {
         const { email, otp, newPassword } = req.body;
         if (!email) {
-            return res.status(404).json({ error: "Looks like you refreshed the page. Try again after an hour." });
+            return res.status(404).json({
+                error: "Looks like you refreshed the page. Try again after an hour.",
+            });
         }
         const user = await User.findOne({ email });
         const otpRecord = await Otp.findOne({ otp, userId: user._id });
