@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import otpGenerator from "otp-generator";
 import User from "../models/user.model.js";
+import Chat from "../models/chat.model.js";
 import Token from "../models/token.model.js";
 import Otp from "../models/otp.model.js";
 import { v4 as uuidv4 } from "uuid";
@@ -83,12 +84,16 @@ router.get("/:id/verify/:token", async (req, res) => {
         // ---
 
         // --- set isEmailVerified to true
-        await User.findByIdAndUpdate(testUser._id, { isEmailVerified: true });
+        const thisone = await User.findByIdAndUpdate(testUser._id, {
+            isEmailVerified: true,
+        });
         // --- delete token from Token
         await Token.findByIdAndDelete(testToken._id);
         // ---
 
-        return res.status(200).json({ message: "Email successfully verified" });
+        return res
+            .status(200)
+            .json({ message: "Email successfully verified", status: thisone });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: "Internal Server Error" });
@@ -148,7 +153,10 @@ router.put("/update", auth, async (req, res) => {
                     .json({ error: "Your current password is incorrect" });
             user.password = await bcrypt.hash(newPassword, 10);
         }
-        if (profilePic) user.profilePic = profilePic;
+        if (profilePic) {
+            user.profilePic = profilePic;
+            console.log(profilePic);
+        }
         if (fullName) user.fullName = fullName;
         if (bio) user.bio = bio;
         if (email) {
@@ -258,6 +266,21 @@ router.put("/set-new-password", async (req, res) => {
         return res
             .status(201)
             .json({ message: "Password changed successfully" });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: "Internal server Erorr" });
+    }
+});
+
+// Get User Info
+router.get("/info/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id).select(
+            "username fullName profilePic"
+        );
+        if (!user) return res.status(404).json({ error: "Not found" });
+        return res.status(200).json({ message: "User data found", user });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error: "Internal server Erorr" });

@@ -12,24 +12,28 @@ router.get("/recent", auth, async (req, res) => {
         const chats = await Chat.find({
             $or: [{ uid1: userId }, { uid2: userId }],
         })
-            .populate("uid1", "fullName")
-            .populate("uid2", "fullName")
+            .populate("uid1", "fullName username profilePic")
+            .populate("uid2", "fullName username profilePic")
             .sort({ latestMessage: -1 });
         // extract required data
         const recentChats = chats.map((chat) => {
-            let name, unread, id, saved;
+            let name, unread, id, saved, username, profilePic;
             if (chat.uid1._id == userId) {
                 name = chat.uid2.fullName;
+                username = chat.uid2.username;
+                profilePic = chat.uid2.profilePic;
                 id = chat.uid2._id;
                 unread = chat.unread1;
                 saved = chat.saved1;
             } else if (chat.uid2._id == userId) {
                 name = chat.uid1.fullName;
+                username = chat.uid1.username;
+                profilePic = chat.uid1.profilePic;
                 id = chat.uid1._id;
                 unread = chat.unread2;
                 saved = chat.saved2;
             }
-            return { name, unread, id, saved };
+            return { name, unread, id, saved, username, profilePic };
         });
         return res
             .status(200)
@@ -54,24 +58,28 @@ router.get("/saved", auth, async (req, res) => {
                 },
             ],
         })
-            .populate("uid1", "fullName")
-            .populate("uid2", "fullName")
+            .populate("uid1", "fullName username profilePic")
+            .populate("uid2", "fullName username profilePic")
             .sort({ latestMessage: -1 });
         // extract required data
         const savedChats = chats.map((chat) => {
-            let name, unread, id, saved;
+            let name, unread, id, saved, username, profilePic;
             if (chat.uid1._id == userId) {
                 name = chat.uid2.fullName;
+                username = chat.uid2.username;
+                profilePic = chat.uid2.profilePic;
                 id = chat.uid2._id;
                 unread = chat.unread1;
                 saved = chat.saved1;
             } else if (chat.uid2._id == userId) {
                 name = chat.uid1.fullName;
+                username = chat.uid1.username;
+                profilePic = chat.uid1.profilePic;
                 id = chat.uid1._id;
                 unread = chat.unread2;
                 saved = chat.saved2;
             }
-            return { name, unread, id, saved };
+            return { name, unread, id, saved, username, profilePic };
         });
         return res
             .status(200)

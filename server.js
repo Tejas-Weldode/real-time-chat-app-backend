@@ -11,7 +11,7 @@ const port = 3000;
 
 // middlewares
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '16mb' }));
 app.use(cors());
 
 // db connection
