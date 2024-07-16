@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json({ limit: "16mb" }));
 app.use(cors());
 
-// db connection
+// db connection from mongodb atlas
 try {
     mongoose.connect(process.env.DATABASE);
 } catch (error) {
