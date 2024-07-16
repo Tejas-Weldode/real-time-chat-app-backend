@@ -11,12 +11,12 @@ const port = 3000;
 
 // middlewares
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json({ limit: '16mb' }));
+app.use(bodyParser.json({ limit: "16mb" }));
 app.use(cors());
 
 // db connection
 try {
-    mongoose.connect("mongodb://127.0.0.1:27017/test");
+    mongoose.connect(process.env.DATABASE);
 } catch (error) {
     console.error(error);
 }
